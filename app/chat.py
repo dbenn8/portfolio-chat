@@ -1,10 +1,27 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 from app.llm_service import LLMService
 from app.weaviate_client import search
+from app.rate_limit import chat_limiter
 
 router = APIRouter()
+
+_sessions: dict[str, list[dict]] = {}
+MAX_HISTORY = 10
+
+
+def get_history(session_id: str) -> list[dict]:
+    return _sessions.get(session_id, [])
+
+
+def save_turn(session_id: str, role: str, content: str):
+    if session_id not in _sessions:
+        _sessions[session_id] = []
+    _sessions[session_id].append({"role": role, "content": content})
+    if len(_sessions[session_id]) > MAX_HISTORY:
+        _sessions[session_id] = _sessions[session_id][-MAX_HISTORY:]
+
 
 SYSTEM_PROMPT = """You are Dan Bennett's portfolio assistant. You help visitors learn about Dan's projects, technical skills, and professional background.
 
@@ -72,25 +89,38 @@ def build_source_links(results: list[dict]) -> str:
 
 
 @router.post("/api/chat")
-async def chat(request: ChatRequest):
+async def chat(request_body: ChatRequest, request: Request):
+    client_ip = request.client.host if request.client else "unknown"
+    if not chat_limiter.check(client_ip):
+        raise HTTPException(status_code=429, detail="Rate limit exceeded. Try again in an hour.")
+
     llm = LLMService()
-    query_vector = await llm.embed(request.message)
-    results = search(request.message, query_vector, top_k=5)
+    query_vector = await llm.embed(request_body.message)
+    results = search(request_body.message, query_vector, top_k=5)
     context = build_context(results)
     sources = build_source_links(results)
 
-    messages = [
+    session_id = request_body.session_id or "anonymous"
+    history = get_history(session_id)
+
+    messages = history + [
         {
             "role": "user",
-            "content": f"Context from Dan's portfolio:\n\n{context}\n\n---\n\nUser question: {request.message}",
+            "content": f"Context from Dan's portfolio:\n\n{context}\n\n---\n\nUser question: {request_body.message}",
         }
     ]
 
     async def event_generator():
+        full_response = ""
         async for chunk in llm.chat_stream(messages, SYSTEM_PROMPT):
+            full_response += chunk
             yield {"data": chunk}
         if sources:
-            yield {"data": "\n\n---\n**Sources:** " + sources}
+            source_line = "\n\n---\n**Sources:** " + sources
+            full_response += source_line
+            yield {"data": source_line}
+        save_turn(session_id, "user", request_body.message)
+        save_turn(session_id, "assistant", full_response)
         yield {"data": "[DONE]"}
 
     return EventSourceResponse(event_generator())
