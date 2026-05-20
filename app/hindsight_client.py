@@ -12,22 +12,23 @@ def _headers():
     }
 
 
-def _base_url():
-    return f"{settings.hindsight_url}/v1/default/banks/{BANK_ID}/memory"
+def _bank_url():
+    return f"{settings.hindsight_url}/v1/default/banks/{BANK_ID}"
 
 
 async def retain(content: str, context: str, metadata: dict, document_id: str, tags: list[str] | None = None):
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        payload = {
+    async with httpx.AsyncClient(timeout=120.0) as client:
+        item = {
             "content": content,
             "context": context,
             "metadata": metadata,
             "document_id": document_id,
         }
         if tags:
-            payload["tags"] = tags
+            item["tags"] = tags
+        payload = {"items": [item]}
         response = await client.post(
-            f"{_base_url()}/retain",
+            f"{_bank_url()}/memories",
             json=payload,
             headers=_headers(),
         )
@@ -42,13 +43,13 @@ async def recall(query: str, budget: str = "mid", max_tokens: int = 4096) -> dic
             "budget": budget,
             "max_tokens": max_tokens,
             "include": {
-                "chunks": True,
-                "source_facts": True,
-                "entities": True,
+                "chunks": {},
+                "source_facts": {},
+                "entities": {"max_tokens": 500},
             },
         }
         response = await client.post(
-            f"{_base_url()}/recall",
+            f"{_bank_url()}/memories/recall",
             json=payload,
             headers=_headers(),
         )
@@ -57,8 +58,6 @@ async def recall(query: str, budget: str = "mid", max_tokens: int = 4096) -> dic
 
 
 def chunk_text(text: str, max_tokens: int = 250, overlap_tokens: int = 50) -> list[str]:
-    """Keep chunking for ingestion — Hindsight handles long content but
-    we want to retain with reasonable document sizes and good metadata."""
     words = text.split()
     if len(words) <= max_tokens:
         return [text]
