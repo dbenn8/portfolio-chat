@@ -2,6 +2,12 @@
 (function() {
   const API_URL = window.PORTFOLIO_CHAT_API || '';
   const GREETING = "Hi! I'm Dan's portfolio assistant. Ask me about any of his projects, his tech stack, or his background.";
+  const STARTERS = [
+    "What projects has Dan built with n8n?",
+    "Tell me about Dan's background",
+    "What AI systems has Dan shipped?",
+  ];
+  const SESSION_ID = 'pc-' + Math.random().toString(36).slice(2, 10);
 
   let isOpen = false;
   let messages = [{ role: 'assistant', content: GREETING }];
@@ -64,6 +70,26 @@
     document.body.appendChild(bubble);
     document.body.appendChild(panel);
 
+    // Starter question chips
+    const starters = document.createElement('div');
+    starters.id = 'pc-starters';
+    starters.style.cssText = 'padding:8px 12px; display:flex; flex-wrap:wrap; gap:6px;';
+    STARTERS.forEach(q => {
+      const chip = document.createElement('button');
+      chip.textContent = q;
+      chip.style.cssText = 'background:#f1f5f9; border:1px solid #e2e8f0; border-radius:16px; padding:6px 12px; font-size:11px; color:#475569; cursor:pointer; transition:background 0.15s;';
+      chip.onmouseover = () => chip.style.background = '#e2e8f0';
+      chip.onmouseout = () => chip.style.background = '#f1f5f9';
+      chip.onclick = () => {
+        document.getElementById('pc-input').value = q;
+        sendMessage();
+        starters.style.display = 'none';
+      };
+      starters.appendChild(chip);
+    });
+    const inputRow = document.getElementById('pc-input-row');
+    panel.insertBefore(starters, inputRow);
+
     document.getElementById('pc-input').addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
     });
@@ -96,8 +122,12 @@
 
     input.value = '';
     messages.push({ role: 'user', content: text });
-    messages.push({ role: 'assistant', content: '' });
+    messages.push({ role: 'assistant', content: '...' });
     renderMessages();
+
+    // Hide starter chips
+    const startersEl = document.getElementById('pc-starters');
+    if (startersEl) startersEl.style.display = 'none';
 
     const sendBtn = document.getElementById('pc-send');
     sendBtn.disabled = true;
@@ -106,12 +136,13 @@
       const response = await fetch(API_URL + '/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({ message: text, session_id: SESSION_ID }),
       });
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let buffer = '';
+      let firstToken = true;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -123,6 +154,10 @@
           if (line.startsWith('data: ')) {
             const data = line.slice(6);
             if (data === '[DONE]') break;
+            if (firstToken) {
+              messages[messages.length - 1].content = '';
+              firstToken = false;
+            }
             messages[messages.length - 1].content += data;
             renderMessages();
           }
