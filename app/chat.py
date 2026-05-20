@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 from app.llm_service import LLMService
-from app.weaviate_client import search
+from app.hindsight_client import recall
 from app.rate_limit import chat_limiter
 
 router = APIRouter()
@@ -40,48 +40,24 @@ class ChatRequest(BaseModel):
     session_id: str | None = None
 
 
-SLUG_MAP = {
-    "overnight-briefing": "/projects/overnight-briefing",
-    "mbo-listing-sync": "/projects/mbo-listing-sync",
-    "burrfect-pipeline": "/projects/burrfect-pipeline",
-    "burrfect-water": "/projects/burrfect-water",
-    "btc-backtesting": "/projects/btc-backtesting",
-    "woordjes": "/projects/woordjes",
-    "claude-slack": "/projects/claude-slack",
-    "kumpel-ai": "/projects/kumpel-ai",
-    "project-orchestrator": "/projects/project-orchestrator",
-    "n8n": "/n8n",
-    "index": "/",
-}
-
-
-def source_to_slug(source: str) -> str | None:
-    stem = source.replace(".astro", "").replace(".md", "")
-    return SLUG_MAP.get(stem)
-
-
-def _resolve_slug(r: dict) -> str | None:
-    slug = r.get("slug")
-    if slug:
-        return SLUG_MAP.get(slug, f"/projects/{slug}")
-    return source_to_slug(r["source"])
-
-
-def build_context(results: list[dict]) -> str:
+def build_context(results: list[dict], chunks: dict) -> str:
     sections = []
     for r in results:
-        slug = _resolve_slug(r)
-        source_tag = f"[Source: {r['project']} — {slug}]" if slug else f"[Source: {r['project']}]"
-        sections.append(f"{source_tag}\n{r['text']}")
+        metadata = r.get("metadata", {})
+        project = metadata.get("project", "Unknown")
+        slug = metadata.get("slug", "")
+        source_tag = f"[Source: {project} — {slug}]" if slug else f"[Source: {project}]"
+        sections.append(f"{source_tag}\n{r.get('text', '')}")
     return "\n\n---\n\n".join(sections)
 
 
 def build_source_links(results: list[dict]) -> str:
     seen = {}
     for r in results:
-        slug = _resolve_slug(r)
-        project = r["project"]
-        if slug and project not in seen:
+        metadata = r.get("metadata", {})
+        project = metadata.get("project", "")
+        slug = metadata.get("slug", "")
+        if slug and project and project not in seen:
             seen[project] = slug
     if not seen:
         return ""
@@ -95,9 +71,10 @@ async def chat(request_body: ChatRequest, request: Request):
         raise HTTPException(status_code=429, detail="Rate limit exceeded. Try again in an hour.")
 
     llm = LLMService()
-    query_vector = await llm.embed(request_body.message)
-    results = search(request_body.message, query_vector, top_k=5)
-    context = build_context(results)
+    recall_result = await recall(request_body.message, budget="mid")
+    results = recall_result.get("results", [])
+    chunks = recall_result.get("chunks", {})
+    context = build_context(results, chunks)
     sources = build_source_links(results)
 
     session_id = request_body.session_id or "anonymous"

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Ingestion pipeline: reads cleaned content from rag-content/,
-chunks text, embeds via GreenPT/OpenAI, upserts to Weaviate."""
+chunks text, and retains to Hindsight memory service."""
 
 import json
 import os
@@ -11,8 +11,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
 
-from app.llm_service import LLMService
-from app.weaviate_client import chunk_text, ensure_collection, upsert_chunks, clear_collection
+from app.hindsight_client import retain, chunk_text
 
 RAG_CONTENT_DIR = Path(__file__).parent / "rag-content"
 
@@ -131,7 +130,6 @@ def collect_rag_content(rag_dir: Path) -> list[dict]:
 
 async def run_ingestion():
     print("Starting ingestion...")
-    llm = LLMService()
 
     print(f"Reading from {RAG_CONTENT_DIR}...")
     all_docs = collect_rag_content(RAG_CONTENT_DIR)
@@ -141,23 +139,29 @@ async def run_ingestion():
     all_chunks = []
     for doc in all_docs:
         text_chunks = chunk_text(doc["text"], max_tokens=250, overlap_tokens=50)
-        for chunk in text_chunks:
-            all_chunks.append({**doc, "text": chunk})
+        for i, chunk in enumerate(text_chunks):
+            all_chunks.append({**doc, "text": chunk, "chunk_index": i})
     print(f"Total chunks: {len(all_chunks)}")
 
-    print("Embedding chunks...")
+    print("Retaining to Hindsight...")
     for i, chunk in enumerate(all_chunks):
-        chunk["vector"] = await llm.embed(chunk["text"])
-        if (i + 1) % 20 == 0:
-            print(f"  Embedded {i + 1}/{len(all_chunks)}")
-    print(f"  Embedded {len(all_chunks)}/{len(all_chunks)}")
-
-    print("Clearing and re-creating collection...")
-    clear_collection()
-
-    print("Upserting to Weaviate...")
-    upsert_chunks(all_chunks)
-    print(f"Done! {len(all_chunks)} chunks indexed.")
+        doc_id = f"{chunk['source']}:{chunk['section']}:{chunk.get('chunk_index', 0)}"
+        await retain(
+            content=chunk["text"],
+            context=f"{chunk['project']} - {chunk['section']}",
+            metadata={
+                "project": chunk["project"],
+                "source": chunk["source"],
+                "section": chunk["section"],
+                "content_type": chunk["content_type"],
+                "slug": chunk.get("slug", ""),
+            },
+            document_id=doc_id,
+            tags=[f"project:{chunk['project']}", f"type:{chunk['content_type']}"],
+        )
+        if (i + 1) % 10 == 0:
+            print(f"  Retained {i + 1}/{len(all_chunks)}")
+    print(f"Done! {len(all_chunks)} chunks retained in Hindsight.")
 
 
 if __name__ == "__main__":

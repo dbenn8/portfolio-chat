@@ -32,22 +32,11 @@ def test_get_provider_invalid():
             LLMService()
 
 
-@pytest.mark.asyncio
-async def test_embed_text_greenpt():
+def test_openrouter_provider():
     from app.llm_service import LLMService
-    mock_response = MagicMock()
-    mock_response.data = [MagicMock(embedding=[0.1, 0.2, 0.3])]
-
     with patch("app.llm_service.settings") as mock_settings:
-        mock_settings.llm_provider = "greenpt"
-        mock_settings.greenpt_api_key = "test"
-        mock_settings.greenpt_base_url = "https://api.greenpt.ai/v1"
-        mock_settings.greenpt_chat_model = "gemma-3-27b-it"
-        mock_settings.greenpt_embedding_model = "green-embedding"
-
+        mock_settings.llm_provider = "openrouter"
+        mock_settings.openrouter_api_key = "test"
+        mock_settings.openrouter_model = "anthropic/claude-sonnet-4-6"
         svc = LLMService()
-        svc._embedding_client = MagicMock()
-        svc._embedding_client.embeddings.create.return_value = mock_response
-
-        result = await svc.embed("test text")
-        assert result == [0.1, 0.2, 0.3]
+        assert svc.provider == "openrouter"

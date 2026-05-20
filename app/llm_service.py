@@ -1,7 +1,7 @@
 from typing import AsyncGenerator
 from app.config import settings
 
-VALID_PROVIDERS = {"claude", "openai", "greenpt", "local"}
+VALID_PROVIDERS = {"claude", "openai", "greenpt", "openrouter", "local"}
 
 
 class LLMService:
@@ -10,7 +10,6 @@ class LLMService:
         if self.provider not in VALID_PROVIDERS:
             raise ValueError(f"Unknown LLM provider: {self.provider}")
         self._chat_client = None
-        self._embedding_client = None
         self._init_clients()
 
     def _init_clients(self):
@@ -23,14 +22,16 @@ class LLMService:
             from openai import AsyncOpenAI
             self._chat_client = AsyncOpenAI(api_key=settings.openai_api_key)
         elif self.provider == "greenpt":
-            from openai import AsyncOpenAI, OpenAI
+            from openai import AsyncOpenAI
             self._chat_client = AsyncOpenAI(
                 api_key=settings.greenpt_api_key,
                 base_url=settings.greenpt_base_url,
             )
-            self._embedding_client = OpenAI(
-                api_key=settings.greenpt_api_key,
-                base_url=settings.greenpt_base_url,
+        elif self.provider == "openrouter":
+            from openai import AsyncOpenAI
+            self._chat_client = AsyncOpenAI(
+                api_key=settings.openrouter_api_key,
+                base_url="https://openrouter.ai/api/v1",
             )
         elif self.provider == "local":
             from openai import AsyncOpenAI
@@ -38,24 +39,6 @@ class LLMService:
                 api_key="not-needed",
                 base_url=settings.local_llm_url + "/v1",
             )
-
-        if self._embedding_client is None and self.provider != "greenpt":
-            from openai import OpenAI
-            if settings.greenpt_api_key:
-                self._embedding_client = OpenAI(
-                    api_key=settings.greenpt_api_key,
-                    base_url=settings.greenpt_base_url,
-                )
-            elif settings.openai_api_key:
-                self._embedding_client = OpenAI(api_key=settings.openai_api_key)
-
-    async def embed(self, text: str) -> list[float]:
-        model = settings.greenpt_embedding_model if settings.greenpt_api_key else "text-embedding-3-small"
-        response = self._embedding_client.embeddings.create(
-            model=model,
-            input=text,
-        )
-        return response.data[0].embedding
 
     async def chat_stream(
         self, messages: list[dict], system_prompt: str
@@ -87,6 +70,8 @@ class LLMService:
             return settings.greenpt_chat_model
         elif self.provider == "openai":
             return "gpt-4o-mini"
+        elif self.provider == "openrouter":
+            return settings.openrouter_model
         elif self.provider == "local":
             return settings.local_llm_model
         return "gpt-4o-mini"
