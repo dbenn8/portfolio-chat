@@ -8,7 +8,7 @@ def test_settings_defaults():
         import app.config
         reload(app.config)
         s = app.config.Settings()
-        assert s.llm_provider == "greenpt"
+        assert s.llm_provider == "openrouter"
         assert s.greenpt_base_url == "https://api.greenpt.ai/v1"
         assert s.port == 8000
 

@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    llm_provider: str = "greenpt"
+    llm_provider: str = "openrouter"
 
     anthropic_api_key: str = ""
     openai_api_key: str = ""
