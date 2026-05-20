@@ -10,6 +10,7 @@
   const SESSION_ID = 'pc-' + Math.random().toString(36).slice(2, 10);
 
   let isOpen = false;
+  let selectedProvider = 'openrouter';
   let messages = [{ role: 'assistant', content: GREETING }];
 
   function createStyles() {
@@ -17,10 +18,15 @@
     style.textContent = `
       #pc-bubble { position:fixed; bottom:20px; right:20px; width:56px; height:56px; border-radius:50%; background:#10b981; color:white; border:none; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:9999; display:flex; align-items:center; justify-content:center; font-size:24px; transition:transform 0.2s; }
       #pc-bubble:hover { transform:scale(1.1); }
-      #pc-panel { position:fixed; bottom:88px; right:20px; width:380px; max-height:500px; background:white; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.2); z-index:9999; display:none; flex-direction:column; overflow:hidden; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+      #pc-panel { position:fixed; bottom:88px; right:20px; width:380px; max-height:520px; background:white; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.2); z-index:9999; display:none; flex-direction:column; overflow:hidden; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
       #pc-panel.open { display:flex; }
       #pc-header { background:#0f172a; color:white; padding:14px 16px; font-weight:600; font-size:14px; display:flex; justify-content:space-between; align-items:center; }
       #pc-close { background:none; border:none; color:white; cursor:pointer; font-size:18px; padding:0 4px; }
+      #pc-model-bar { display:flex; gap:4px; padding:8px 12px; background:#f8fafc; border-bottom:1px solid #e2e8f0; }
+      .pc-model-pill { flex:1; padding:5px 8px; border:1px solid #e2e8f0; border-radius:8px; font-size:11px; cursor:pointer; text-align:center; background:white; color:#64748b; transition:all 0.15s; }
+      .pc-model-pill:hover { border-color:#94a3b8; }
+      .pc-model-pill.active { background:#0f172a; color:white; border-color:#0f172a; }
+      .pc-model-pill .pc-pill-icon { margin-right:3px; }
       #pc-messages { flex:1; overflow-y:auto; padding:12px; max-height:340px; }
       .pc-msg { margin-bottom:10px; line-height:1.5; font-size:13px; }
       .pc-msg.user { text-align:right; }
@@ -47,6 +53,12 @@
       .replace(/\n/g, '<br>');
   }
 
+  function updateModelPills() {
+    document.querySelectorAll('.pc-model-pill').forEach(pill => {
+      pill.classList.toggle('active', pill.dataset.provider === selectedProvider);
+    });
+  }
+
   function createUI() {
     const bubble = document.createElement('button');
     bubble.id = 'pc-bubble';
@@ -60,6 +72,10 @@
         <span>Ask about Dan's projects</span>
         <button id="pc-close" onclick="document.getElementById('pc-panel').classList.remove('open');document.getElementById('pc-bubble').style.display='flex'">✕</button>
       </div>
+      <div id="pc-model-bar">
+        <button class="pc-model-pill active" data-provider="openrouter" title="Claude Sonnet — state of the art"><span class="pc-pill-icon">⚡</span>Pro (Claude)</button>
+        <button class="pc-model-pill" data-provider="greenpt" title="Gemma 27B — open source, carbon-neutral hosting"><span class="pc-pill-icon">🌱</span>Eco (Gemma)</button>
+      </div>
       <div id="pc-messages"></div>
       <div id="pc-input-row">
         <input id="pc-input" placeholder="Ask me anything..." />
@@ -69,6 +85,13 @@
 
     document.body.appendChild(bubble);
     document.body.appendChild(panel);
+
+    document.querySelectorAll('.pc-model-pill').forEach(pill => {
+      pill.onclick = () => {
+        selectedProvider = pill.dataset.provider;
+        updateModelPills();
+      };
+    });
 
     // Starter question chips
     const starters = document.createElement('div');
@@ -125,7 +148,6 @@
     messages.push({ role: 'assistant', content: '...' });
     renderMessages();
 
-    // Hide starter chips
     const startersEl = document.getElementById('pc-starters');
     if (startersEl) startersEl.style.display = 'none';
 
@@ -136,7 +158,7 @@
       const response = await fetch(API_URL + '/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text, session_id: SESSION_ID }),
+        body: JSON.stringify({ message: text, session_id: SESSION_ID, provider: selectedProvider }),
       });
 
       const reader = response.body.getReader();

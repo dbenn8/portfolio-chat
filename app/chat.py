@@ -38,6 +38,7 @@ Rules:
 class ChatRequest(BaseModel):
     message: str
     session_id: str | None = None
+    provider: str | None = None
 
 
 def build_context(results: list[dict], chunks: dict) -> str:
@@ -70,7 +71,8 @@ async def chat(request_body: ChatRequest, request: Request):
     if not chat_limiter.check(client_ip):
         raise HTTPException(status_code=429, detail="Rate limit exceeded. Try again in an hour.")
 
-    llm = LLMService()
+    provider = request_body.provider if request_body.provider in ("openrouter", "greenpt") else None
+    llm = LLMService(provider=provider)
     recall_result = await recall(request_body.message, budget="mid")
     results = recall_result.get("results", [])
     chunks = recall_result.get("chunks", {})
