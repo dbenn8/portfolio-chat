@@ -1,0 +1,282 @@
+[
+  {
+    "filename": "summaries/AI Builder Summary for Woordjes.md",
+    "source_path": "/Users/danielbennett/codeNew/dutch-app/AI Builder Summary for Woordjes.md",
+    "content_type": "summary",
+    "project_name": "Woordjes",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for Burrfect Backend.md",
+    "source_path": "/Users/danielbennett/codeNew/Burrfect_backend/AI Builder Summary for Burrfect Backend.md",
+    "content_type": "summary",
+    "project_name": "Burrfect Backend",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for Merge Duplicates Dashboard.md",
+    "source_path": "/Users/danielbennett/codeNew/merge-duplicates-dashboard/AI Builder Summary for Merge Duplicates Dashboard.md",
+    "content_type": "summary",
+    "project_name": "Merge Duplicates Dashboard",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for Kumpel AI.md",
+    "source_path": "/Users/danielbennett/codeNew/kumpel.ai_django/AI Builder Summary for Kumpel AI.md",
+    "content_type": "summary",
+    "project_name": "Kumpel AI",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for Burrfect WordPress Site.md",
+    "source_path": "/Users/danielbennett/codeNew/Burrfectio_WP_site/AI Builder Summary for Burrfect WordPress Site.md",
+    "content_type": "summary",
+    "project_name": "Burrfect WordPress Site",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for Overnight Pipeline.md",
+    "source_path": "/Users/danielbennett/codeNew/overnight-pipeline/AI Builder Summary for Overnight Pipeline.md",
+    "content_type": "summary",
+    "project_name": "Overnight Pipeline",
+    "scrub_notes": [
+      "Redacted family details"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for Burrfect Analytics.md",
+    "source_path": "/Users/danielbennett/codeNew/burrfect_analytics/AI Builder Summary for Burrfect Analytics.md",
+    "content_type": "summary",
+    "project_name": "Burrfect Analytics",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for Claude-Slack.md",
+    "source_path": "/Users/danielbennett/codeNew/claude-slack/AI Builder Summary for Claude-Slack.md",
+    "content_type": "summary",
+    "project_name": "Claude-Slack",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for BTC Bot.md",
+    "source_path": "/Users/danielbennett/codeNew/btcbot/AI Builder Summary for BTC Bot.md",
+    "content_type": "summary",
+    "project_name": "BTC Bot",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for Burrfect App.md",
+    "source_path": "/Users/danielbennett/codeNew/burrfect/AI Builder Summary for Burrfect App.md",
+    "content_type": "summary",
+    "project_name": "Burrfect App",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for Burrfect Water.md",
+    "source_path": "/Users/danielbennett/Documents/Claude/Projects/Burrfect Water/AI Builder Summary for Burrfect Water.md",
+    "content_type": "summary",
+    "project_name": "Burrfect Water",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for cre-puppeteer.md",
+    "source_path": "/Users/danielbennett/Documents/Claude/Projects/AI Consulting/cre-puppeteer/AI Builder Summary for cre-puppeteer.md",
+    "content_type": "summary",
+    "project_name": "cre-puppeteer",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for django-cre.md",
+    "source_path": "/Users/danielbennett/Documents/Claude/Projects/AI Consulting/django-cre/AI Builder Summary for django-cre.md",
+    "content_type": "summary",
+    "project_name": "django-cre",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for MBO n8n Workflows.md",
+    "source_path": "/Users/danielbennett/Documents/Claude/Projects/AI Consulting/MBO - n8n Workflows/AI Builder Summary for MBO n8n Workflows.md",
+    "content_type": "summary",
+    "project_name": "MBO n8n Workflows",
+    "scrub_notes": [
+      "Redacted client personal reference"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for MARVIN.md",
+    "source_path": "/Users/danielbennett/marvin/AI Builder Summary for MARVIN.md",
+    "content_type": "summary",
+    "project_name": "MARVIN",
+    "scrub_notes": [
+      "Redacted family details",
+      "Removed Anthropic filename detection workaround"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for Meal Planning.md",
+    "source_path": "/Users/danielbennett/marvin/Meal Planning/AI Builder Summary for Meal Planning.md",
+    "content_type": "summary",
+    "project_name": "Meal Planning",
+    "scrub_notes": [
+      "Redacted family details"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for n8n-dan.md",
+    "source_path": "/Users/danielbennett/marvin/n8n-dan/AI Builder Summary for n8n-dan.md",
+    "content_type": "summary",
+    "project_name": "n8n-dan",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for CRE Field Mapping Skill.md",
+    "source_path": "/Users/danielbennett/projects/cre-field-mapping/AI Builder Summary for CRE Field Mapping Skill.md",
+    "content_type": "summary",
+    "project_name": "CRE Field Mapping Skill",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for n8n-appliku.md",
+    "source_path": "/Users/danielbennett/projects/n8n-appliku/AI Builder Summary for n8n-appliku.md",
+    "content_type": "summary",
+    "project_name": "n8n-appliku",
+    "scrub_notes": [
+      "Redacted API key/token"
+    ]
+  },
+  {
+    "filename": "summaries/AI Builder Summary for LLM Infrastructure.md",
+    "source_path": "/Users/danielbennett/llm/AI Builder Summary for LLM Infrastructure.md",
+    "content_type": "summary",
+    "project_name": "LLM Infrastructure",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "portfolio-pages/index.md",
+    "source_path": "/Users/danielbennett/codeNew/portfolio/src/pages/index.astro",
+    "content_type": "portfolio",
+    "project_name": "Portfolio Home",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "portfolio-pages/n8n.md",
+    "source_path": "/Users/danielbennett/codeNew/portfolio/src/pages/n8n.astro",
+    "content_type": "portfolio",
+    "project_name": "n8n Application",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "portfolio-pages/btc-backtesting.md",
+    "source_path": "/Users/danielbennett/codeNew/portfolio/src/pages/projects/btc-backtesting.astro",
+    "content_type": "portfolio",
+    "project_name": "BTC Backtesting",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "portfolio-pages/burrfect-pipeline.md",
+    "source_path": "/Users/danielbennett/codeNew/portfolio/src/pages/projects/burrfect-pipeline.astro",
+    "content_type": "portfolio",
+    "project_name": "Burrfect Pipeline",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "portfolio-pages/burrfect-water.md",
+    "source_path": "/Users/danielbennett/codeNew/portfolio/src/pages/projects/burrfect-water.astro",
+    "content_type": "portfolio",
+    "project_name": "Burrfect Water",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "portfolio-pages/claude-slack.md",
+    "source_path": "/Users/danielbennett/codeNew/portfolio/src/pages/projects/claude-slack.astro",
+    "content_type": "portfolio",
+    "project_name": "Claude-Slack",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "portfolio-pages/kumpel-ai.md",
+    "source_path": "/Users/danielbennett/codeNew/portfolio/src/pages/projects/kumpel-ai.astro",
+    "content_type": "portfolio",
+    "project_name": "Kumpel AI",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "portfolio-pages/mbo-listing-sync.md",
+    "source_path": "/Users/danielbennett/codeNew/portfolio/src/pages/projects/mbo-listing-sync.astro",
+    "content_type": "portfolio",
+    "project_name": "MBO Listing Sync",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "portfolio-pages/overnight-briefing.md",
+    "source_path": "/Users/danielbennett/codeNew/portfolio/src/pages/projects/overnight-briefing.astro",
+    "content_type": "portfolio",
+    "project_name": "Overnight Briefing",
+    "scrub_notes": [
+      "Redacted family details"
+    ]
+  },
+  {
+    "filename": "portfolio-pages/project-orchestrator.md",
+    "source_path": "/Users/danielbennett/codeNew/portfolio/src/pages/projects/project-orchestrator.astro",
+    "content_type": "portfolio",
+    "project_name": "Project Orchestrator",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  },
+  {
+    "filename": "portfolio-pages/woordjes.md",
+    "source_path": "/Users/danielbennett/codeNew/portfolio/src/pages/projects/woordjes.astro",
+    "content_type": "portfolio",
+    "project_name": "Woordjes",
+    "scrub_notes": [
+      "No sensitive content found"
+    ]
+  }
+]
